@@ -1,0 +1,5 @@
+/* Dashboard Styles */
+:root {
+  --sidebar-width: 280px;
+  --sidebar-width-compact: 80px;
+}

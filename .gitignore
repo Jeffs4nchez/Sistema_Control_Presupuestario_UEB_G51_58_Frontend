@@ -1,0 +1,38 @@
+# ── Dependencias ────────────────────────────────────────────────────────────
+node_modules
+
+# ── Build de producción (Railway lo genera al desplegar) ────────────────────
+dist
+dist-ssr
+.vite
+
+# ── Variables de entorno (NUNCA subir al repo) ───────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── Logs ─────────────────────────────────────────────────────────────────────
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ── Testing y cobertura ──────────────────────────────────────────────────────
+coverage
+*.lcov
+
+# ── IDEs y editores ──────────────────────────────────────────────────────────
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# ── Sistema operativo ────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
