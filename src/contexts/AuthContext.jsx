@@ -51,6 +51,18 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  const fetchPermisos = async (cargo, authToken) => {
+    try {
+      const res = await axios.get(
+        `${API_URL}/permisos/${encodeURIComponent(cargo)}`,
+        { headers: { Authorization: `Bearer ${authToken}` } }
+      );
+      return res.data.success ? (res.data.data || {}) : {};
+    } catch {
+      return {};
+    }
+  };
+
   const validateToken = async (authToken) => {
     try {
       const response = await axios.get(`${API_URL}/me`, {
@@ -59,7 +71,9 @@ export const AuthProvider = ({ children }) => {
         },
       });
       if (response.data.status === 'success') {
-        setUser(response.data.user);
+        const userData = response.data.user;
+        userData.permisos = await fetchPermisos(userData.cargo, authToken);
+        setUser(userData);
         setIsAuthenticated(true);
       }
     } catch {
@@ -82,6 +96,7 @@ export const AuthProvider = ({ children }) => {
       if (response.data.status === 'success') {
         const authToken = response.data.token;
         const userData = response.data.user;
+        userData.permisos = await fetchPermisos(userData.cargo, authToken);
 
         clearCache();
         setToken(authToken);
@@ -124,6 +139,15 @@ export const AuthProvider = ({ children }) => {
     setUser((prev) => ({ ...prev, ...partial }));
   }, []);
 
+  const refreshPermisos = useCallback(async (cargo) => {
+    const targetCargo = cargo || user?.cargo;
+    if (!targetCargo || !token) return;
+    const permisos = await fetchPermisos(targetCargo, token);
+    if ((!cargo || cargo === user?.cargo)) {
+      setUser((prev) => ({ ...prev, permisos }));
+    }
+  }, [token, user?.cargo]); // eslint-disable-line
+
   return (
     <AuthContext.Provider
       value={{
@@ -134,6 +158,7 @@ export const AuthProvider = ({ children }) => {
         login,
         logout,
         updateUser,
+        refreshPermisos,
       }}
     >
       {children}

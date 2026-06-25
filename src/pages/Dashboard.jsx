@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   LayoutDashboard, Users, LogOut, TrendingUp, FileText,
   CheckCircle2, Menu, ChevronLeft, ChevronRight, KeyRound,
-  Building2, FileDown, Clock, X, AlertTriangle, Info, Banknote, BarChart2,
+  Building2, FileDown, Clock, X, AlertTriangle, Info, Banknote, BarChart2, ShieldCheck,
 } from 'lucide-react';
 import CambiarContrasenaModal from '../components/CambiarContrasenaModal';
 import { useFiscalYear } from '../contexts/FiscalYearContext';
@@ -42,6 +42,8 @@ const buildMenuGroups = (user, isReadOnly = false) => {
       admin.push({ label: 'Reportes',  path: '/dashboard/reportes',  icon: FileDown });
     if (can.verAuditoria(user))
       admin.push({ label: 'Auditoría', path: '/dashboard/auditoria', icon: Clock });
+    if (can.verPermisos(user))
+      admin.push({ label: 'Permisos',  path: '/dashboard/permisos',  icon: ShieldCheck });
     if (admin.length) groups.push({ label: 'Administración', items: admin });
 
     return groups;
@@ -69,6 +71,8 @@ const buildMenuGroups = (user, isReadOnly = false) => {
     admin.push({ label: 'Reportes',            path: '/dashboard/reportes',  icon: FileDown });
   if (can.verAuditoria(user))
     admin.push({ label: 'Auditoría',           path: '/dashboard/auditoria', icon: Clock });
+  if (can.verPermisos(user))
+    admin.push({ label: 'Permisos',            path: '/dashboard/permisos',  icon: ShieldCheck });
   if (admin.length) groups.push({ label: 'Administración', items: admin });
 
   return groups;

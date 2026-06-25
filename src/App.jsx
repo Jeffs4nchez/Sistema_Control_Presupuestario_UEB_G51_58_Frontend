@@ -23,6 +23,7 @@ const EntidadRequiriente   = lazy(() => import('./pages/EntidadRequiriente'));
 const Reportes             = lazy(() => import('./pages/Reportes'));
 const ReportePrint         = lazy(() => import('./pages/ReportePrint'));
 const Auditoria            = lazy(() => import('./pages/Auditoria'));
+const Permisos             = lazy(() => import('./pages/Permisos'));
 
 function RoleRoute({ check, children }) {
   const { user } = useContext(AuthContext);
@@ -95,6 +96,12 @@ function AppContent() {
           <Route path="auditoria" element={
             <RoleRoute check={can.verAuditoria}>
               <Auditoria />
+            </RoleRoute>
+          } />
+
+          <Route path="permisos" element={
+            <RoleRoute check={can.verPermisos}>
+              <Permisos />
             </RoleRoute>
           } />
 
