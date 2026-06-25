@@ -36,8 +36,8 @@ export const can = {
   verPresupuesto:          (u) => hasRole(u, OPERATIVOS),
   exportarTodosReportes:   (u) => hasRole(u, [ROLES.DIRECTOR, ROLES.RECTOR, ROLES.ADMIN]),
 
-  // Certificaciones — controladas por RBAC dinámico
-  verCertificacion:        (u) => permiso(u, 'certificaciones', 'ver',      () => hasRole(u, OPERATIVOS)),
+  // Certificaciones — ver módulo es por rol; acciones internas por RBAC
+  verCertificacion:        (u) => hasRole(u, OPERATIVOS),
   crearCertificacion:      (u) => permiso(u, 'certificaciones', 'crear',    () => hasRole(u, OPERATIVOS)),
   editarCertificacion:     (u) => permiso(u, 'certificaciones', 'crear',    () => hasRole(u, OPERATIVOS)),
   aprobarCertificacion:    (u) => permiso(u, 'certificaciones', 'aprobar',  () => hasRole(u, APROBADORES)),
@@ -46,8 +46,8 @@ export const can = {
   reenviarCertificacion:   (u) => permiso(u, 'certificaciones', 'reenviar', () => hasRole(u, OPERATIVOS)),
   verTodosLosCerts:        (u) => permiso(u, 'certificaciones', 'aprobar',  () => hasRole(u, APROBADORES)),
 
-  // Liquidaciones — controladas por RBAC dinámico
-  verLiquidaciones:        (u) => permiso(u, 'liquidaciones', 'ver',      () => hasRole(u, OPERATIVOS)),
+  // Liquidaciones — ver módulo es por rol; acciones internas por RBAC
+  verLiquidaciones:        (u) => hasRole(u, OPERATIVOS),
   registrarLiquidacion:    (u) => permiso(u, 'liquidaciones', 'crear',    () => hasRole(u, OPERATIVOS)),
   anularLiquidacion:       (u) => permiso(u, 'liquidaciones', 'anular',   () => hasRole(u, DIRECTORES)),
   eliminarLiquidacion:     (u) => permiso(u, 'liquidaciones', 'eliminar', () => hasRole(u, DIRECTORES)),
