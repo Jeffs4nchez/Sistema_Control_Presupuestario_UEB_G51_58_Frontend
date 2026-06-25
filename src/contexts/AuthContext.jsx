@@ -65,11 +65,8 @@ export const AuthProvider = ({ children }) => {
 
   const validateToken = async (authToken) => {
     try {
-      const response = await axios.get(`${API_URL}/me`, {
-        headers: {
-          Authorization: `Bearer ${authToken}`,
-        },
-      });
+      axios.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
+      const response = await axios.get(`${API_URL}/me`);
       if (response.data.status === 'success') {
         const userData = response.data.user;
         userData.permisos = await fetchPermisos(userData.cargo, authToken);
@@ -77,6 +74,7 @@ export const AuthProvider = ({ children }) => {
         setIsAuthenticated(true);
       }
     } catch {
+      delete axios.defaults.headers.common['Authorization'];
       Cookies.remove('auth_token');
       setToken(null);
       setUser(null);
@@ -96,6 +94,7 @@ export const AuthProvider = ({ children }) => {
       if (response.data.status === 'success') {
         const authToken = response.data.token;
         const userData = response.data.user;
+        axios.defaults.headers.common['Authorization'] = `Bearer ${authToken}`;
         userData.permisos = await fetchPermisos(userData.cargo, authToken);
 
         clearCache();
@@ -129,6 +128,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = useCallback(() => {
     clearCache();
+    delete axios.defaults.headers.common['Authorization'];
     setUser(null);
     setToken(null);
     setIsAuthenticated(false);
