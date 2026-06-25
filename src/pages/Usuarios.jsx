@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 import { cachedAxiosGet, invalidateCache } from '../utils/apiCache';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Edit2, Trash2, UserPlus, Users, UserCheck, UserX, ShieldOff, ShieldCheck, X, Lock, Eye, EyeOff, Search } from 'lucide-react';
+import { Edit2, Trash2, UserPlus, Users, UserCheck, UserX, ShieldOff, ShieldCheck, X, Lock, Eye, EyeOff, Search, Bell, BellOff } from 'lucide-react';
 
 const CARGOS = [
   'Director(a) financiero',
@@ -144,7 +144,7 @@ export const Usuarios = () => {
 
   const [formData, setFormData] = useState({
     nombres: '', apellidos: '', correo_institucional: '',
-    contrasena: '', cargo: '', estado: 'activo',
+    contrasena: '', cargo: '', estado: 'activo', recibe_notificaciones: true,
   });
 
   useEffect(() => { cargarUsuarios(); }, []);
@@ -169,14 +169,14 @@ export const Usuarios = () => {
   };
 
   const handleAbrirCrear = () => {
-    setFormData({ nombres: '', apellidos: '', correo_institucional: '', contrasena: '', cargo: '', estado: 'activo' });
+    setFormData({ nombres: '', apellidos: '', correo_institucional: '', contrasena: '', cargo: '', estado: 'activo', recibe_notificaciones: true });
     setUsuarioAEditar(null);
     setDialogMsg({ text: '', type: '' });
     setShowCreateDialog(true);
   };
 
   const handleAbrirEditar = (u) => {
-    setFormData({ nombres: u.nombres, apellidos: u.apellidos, correo_institucional: u.correo_institucional, contrasena: '', cargo: u.cargo, estado: u.estado });
+    setFormData({ nombres: u.nombres, apellidos: u.apellidos, correo_institucional: u.correo_institucional, contrasena: '', cargo: u.cargo, estado: u.estado, recibe_notificaciones: u.recibe_notificaciones !== false });
     setUsuarioAEditar(u);
     setDialogMsg({ text: '', type: '' });
     setShowEditDialog(true);
@@ -415,10 +415,10 @@ export const Usuarios = () => {
             <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '560px' }}>
               <thead>
                 <tr style={{ background: '#f0f4f8', borderBottom: '2px solid rgba(26,58,92,0.08)' }}>
-                  {['Nombre', 'Correo', 'Cargo', 'Estado', 'Acciones'].map((h, i) => (
+                  {['Nombre', 'Correo', 'Cargo', 'Estado', 'Notif.', 'Acciones'].map((h, i) => (
                     <th key={i} style={{
                       padding: '11px 16px',
-                      textAlign: i === 4 ? 'center' : 'left',
+                      textAlign: i >= 4 ? 'center' : 'left',
                       fontSize: '11px', fontWeight: 700,
                       color: 'var(--text-muted)',
                       textTransform: 'uppercase',
@@ -467,6 +467,14 @@ export const Usuarios = () => {
                           ? <span className="badge" style={{ background: 'rgba(217,119,6,0.12)', color: '#92400e', border: '1px solid rgba(217,119,6,0.30)', borderRadius: '999px', padding: '2px 10px', fontSize: '11px', fontWeight: 700 }}>Bloqueado</span>
                           : <span className="badge badge-red">Inactivo</span>
                       }
+                    </td>
+                    <td style={{ padding: '12px 16px', textAlign: 'center' }}>
+                      <span title={u.recibe_notificaciones !== false ? 'Recibe notificaciones' : 'Notificaciones desactivadas'}>
+                        {u.recibe_notificaciones !== false
+                          ? <Bell size={15} color="#2e6ca4" />
+                          : <BellOff size={15} color="#cbd5e1" />
+                        }
+                      </span>
                     </td>
                     <td style={{ padding: '12px 16px', textAlign: 'center' }}>
                       <div style={{ display: 'flex', gap: '6px', justifyContent: 'center' }}>
@@ -577,6 +585,7 @@ export const Usuarios = () => {
                 </select>
               </FormField>
             </div>
+            <ToggleNotificaciones value={formData.recibe_notificaciones} onChange={v => setFormData({ ...formData, recibe_notificaciones: v })} />
             <ModalActions onCancel={() => setShowCreateDialog(false)} onConfirm={handleCrearUsuario} confirmLabel={isLoading ? 'Creando...' : 'Crear Usuario'} disabled={isLoading} />
           </UEBModal>
         )}
@@ -628,6 +637,7 @@ export const Usuarios = () => {
                 </select>
               </FormField>
             </div>
+            <ToggleNotificaciones value={formData.recibe_notificaciones} onChange={v => setFormData({ ...formData, recibe_notificaciones: v })} />
             <ModalActions onCancel={() => setShowEditDialog(false)} onConfirm={handleActualizarUsuario} confirmLabel={isLoading ? 'Guardando...' : 'Guardar Cambios'} disabled={isLoading} />
           </UEBModal>
         )}
@@ -714,6 +724,48 @@ function UEBModal({ title, onClose, isMobile, small, icon: Icon, gradient, child
         </div>
       </motion.div>
     </motion.div>
+  );
+}
+
+function ToggleNotificaciones({ value, onChange }) {
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '10px 12px', marginBottom: '14px',
+      background: value ? 'rgba(46,108,164,0.06)' : 'rgba(100,116,139,0.06)',
+      border: `1px solid ${value ? 'rgba(46,108,164,0.20)' : 'rgba(100,116,139,0.18)'}`,
+      borderRadius: '8px',
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        {value ? <Bell size={14} color="#2e6ca4" /> : <BellOff size={14} color="#94a3b8" />}
+        <div>
+          <span style={{ fontSize: '12px', fontWeight: 600, color: value ? '#1a3a5c' : '#64748b' }}>
+            Recibe notificaciones por correo
+          </span>
+          <p style={{ margin: 0, fontSize: '11px', color: '#94a3b8' }}>
+            Correos de aprobación y rechazo de certificaciones
+          </p>
+        </div>
+      </div>
+      <button
+        type="button"
+        onClick={() => onChange(!value)}
+        style={{
+          width: '40px', height: '22px', borderRadius: '999px', border: 'none',
+          background: value ? '#2e6ca4' : '#cbd5e1',
+          cursor: 'pointer', position: 'relative', flexShrink: 0,
+          transition: 'background 0.2s',
+        }}
+      >
+        <span style={{
+          position: 'absolute', top: '3px',
+          left: value ? '21px' : '3px',
+          width: '16px', height: '16px', borderRadius: '50%',
+          background: '#fff', transition: 'left 0.2s',
+          boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
+        }} />
+      </button>
+    </div>
   );
 }
 
