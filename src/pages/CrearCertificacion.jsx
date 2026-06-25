@@ -1088,7 +1088,7 @@ export default function CrearCertificacion({ onCreated }) {
                 <form onSubmit={e => { e.preventDefault(); handleAgregarEntidad() }}>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '18px' }}>
                     {[
-                      ['Nombre Entidad *',   'nombre_entidad',       'text'],
+                      ['Nombre Unidad *',    'nombre_entidad',       'text'],
                       ['Responsable *',      'responsable_entidad',  'text'],
                       ['Correo *',           'correo_institucional', 'email'],
                     ].map(([lbl, field, type]) => (
